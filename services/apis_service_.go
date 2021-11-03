@@ -22,7 +22,7 @@ type apisServiceInterface interface {
 type apisService struct {
 }
 
-func (a *apisService) GetApi(api apis.Api) (*apis.Api, rest_errors.RestErr) {
+func (*apisService) GetApi(api apis.Api) (*apis.Api, rest_errors.RestErr) {
 	result := &apis.Api{}
 	feed, err := result.GetRss()
 	if err != nil {

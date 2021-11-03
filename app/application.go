@@ -2,7 +2,7 @@ package app
 
 import (
   "github.com/gin-gonic/gin"
-  "github.com/katsun0921/portfolio_api/logger"
+  "github.com/katsun0921/go_utils/logger"
 )
 
 var(
@@ -13,8 +13,5 @@ func StartApplication() {
   mapUrls()
 
   logger.Info("about to start the application...")
-  err := router.Run(":8081")
-  if err != nil {
-    return
-  }
+  router.Run(":8081")
 }

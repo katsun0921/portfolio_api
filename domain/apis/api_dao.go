@@ -12,8 +12,8 @@ const feedZenn = "https://zenn.dev/katsun0921/feed"
 func (api *Api) GetRss() (*gofeed.Feed, rest_errors.RestErr) {
   feed, err := gofeed.NewParser().ParseURL(feedZenn)
   if err != nil {
-    logger.Error("error when trying to prepare get user statement", err)
-    return nil, rest_errors.NewInternalServerError("error when trying to get user", errors.New("database error"))
+    logger.Error("error when trying to rss", err)
+    return nil, rest_errors.NewInternalServerError("error when trying to get rss api", errors.New("response error"))
   }
 
   return feed, nil

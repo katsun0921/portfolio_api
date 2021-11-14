@@ -2,7 +2,8 @@ package apis
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
+  "fmt"
+  "github.com/gin-gonic/gin"
 	"github.com/katsun0921/go_utils/logger"
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/domain/apis"
@@ -11,9 +12,19 @@ import (
 )
 
 func Get(c *gin.Context) {
-	var api apis.Api
+	var resApi *apis.Api
+	var err rest_errors.RestErr
 
-	rss, err := services.ApisService.GetApi(api)
+	webapi := c.Query("webapi")
+	fmt.Println("query:",webapi)
+
+	switch webapi {
+    case "twitter":
+      resApi, err = services.ApisService.GetTwitterApi()
+    default:
+      resApi, err = services.ApisService.GetApi()
+  }
+
 	if err != nil {
 		logger.Error("error when trying to api request", err)
 		restErr := rest_errors.NewBadRequestError("invalid json error", errors.New("json error"))
@@ -21,5 +32,5 @@ func Get(c *gin.Context) {
 		  return
     }
 	}
-	c.JSON(http.StatusOK, rss)
+	c.JSON(http.StatusOK, resApi)
 }

@@ -1,14 +1,15 @@
 package services
 
 import (
+  "fmt"
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/domain/apis"
   "strings"
 )
 
 const (
-  RSS  string = "RSS"
   ZENN string = "zenn"
+  TWITTER string = "twitter"
 )
 
 var (
@@ -16,13 +17,14 @@ var (
 )
 
 type apisServiceInterface interface {
-  GetApi(api apis.Api) (*apis.Api, rest_errors.RestErr)
+  GetApi() (*apis.Api, rest_errors.RestErr)
+  GetTwitterApi() (*apis.Api, rest_errors.RestErr)
 }
 
 type apisService struct {
 }
 
-func (*apisService) GetApi(api apis.Api) (*apis.Api, rest_errors.RestErr) {
+func (*apisService) GetApi() (*apis.Api, rest_errors.RestErr) {
   result := &apis.Api{}
   feed, err := result.GetRss()
   if err != nil {
@@ -35,13 +37,35 @@ func (*apisService) GetApi(api apis.Api) (*apis.Api, rest_errors.RestErr) {
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
     result.Title = item.Title
-    result.Description.PlainText = itemPlainText
-    result.Description.Html = item.Description
+    result.PlainText = itemPlainText
     result.Link = item.Link
     result.DateCreated = item.Published
-    result.Type = RSS
     result.Service = ZENN
   }
 
-  return result, nil
+  return result, err
+}
+
+func (*apisService) GetTwitterApi() (*apis.Api, rest_errors.RestErr) {
+  result := &apis.Api{}
+  feed, err := result.GetRss()
+  if err != nil {
+    return nil, err
+  }
+
+  twitter, err := result.GetTwitter()
+  fmt.Println(twitter)
+  items := feed.Items
+  for _, item := range items {
+    itemPlainText := item.Description
+    itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
+    itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
+    result.Title = item.Title
+    result.PlainText = itemPlainText
+    result.Link = item.Link
+    result.DateCreated = item.Published
+    result.Service = TWITTER
+  }
+
+  return result, err
 }

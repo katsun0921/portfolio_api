@@ -19,7 +19,7 @@ func (api *Api) GetRss() (*gofeed.Feed, rest_errors.RestErr) {
 	feed, err := gofeed.NewParser().ParseURL(feedZenn)
 	if err != nil {
 		logger.Error("error when trying to rss", err)
-		return nil, rest_errors.NewInternalServerError("error when trying to get rss api", errors.New("response error"))
+    return nil, rest_errors.NewInternalServerError("error when trying to get rss api", errors.New("response error"))
 	}
 
 	return feed, nil
@@ -30,6 +30,7 @@ func (api *Api) GetTwitter() ([]twitter.Tweet, rest_errors.RestErr) {
 	envErr := godotenv.Load()
 	if envErr != nil {
 	  logger.Error("Error loading .env file", envErr)
+    return nil, rest_errors.NewInternalServerError("Error env file", envErr)
   }
 
   twitterApiKey := os.Getenv("TWITTER_API_KEY")
@@ -50,20 +51,17 @@ func (api *Api) GetTwitter() ([]twitter.Tweet, rest_errors.RestErr) {
 	toIntTwitterUserId, errUserId := strconv.ParseInt(twitterUserId, 10, 64)
 	if errUserId != nil {
     logger.Error("Error loading User Id from .env file", errUserId)
+    return nil, rest_errors.NewInternalServerError("twitter server error to user id", errUserId)
   }
-  
+
 	tweets, httpResponse, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 		UserID: toIntTwitterUserId,
 		Count:  2,
 	})
 
-	for _, tweet := range tweets {
-		fmt.Println(tweet.Text)
-	}
-
 	if err != nil {
 		logger.Error(fmt.Sprintf("twitter server error %d", httpResponse.StatusCode), err)
+		return nil, rest_errors.NewInternalServerError(fmt.Sprintf("twitter server error %d", httpResponse.StatusCode), err)
 	}
-	resErr := rest_errors.NewBadRequestError("twitter api server error", errors.New("server error"))
-	return tweets, resErr
+	return tweets, nil
 }

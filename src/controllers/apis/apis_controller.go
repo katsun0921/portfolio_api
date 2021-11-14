@@ -1,18 +1,18 @@
 package apis
 
 import (
-	"errors"
+  "errors"
   "fmt"
   "github.com/gin-gonic/gin"
-	"github.com/katsun0921/go_utils/logger"
-	"github.com/katsun0921/go_utils/rest_errors"
-	"github.com/katsun0921/portfolio_api/domain/apis"
-	"github.com/katsun0921/portfolio_api/services"
-	"net/http"
+  "github.com/katsun0921/go_utils/logger"
+  "github.com/katsun0921/go_utils/rest_errors"
+  "github.com/katsun0921/portfolio_api/src/domain/apis"
+  "github.com/katsun0921/portfolio_api/src/services"
+  "net/http"
 )
 
 func Get(c *gin.Context) {
-	var resApi *apis.Api
+	var resApi []*apis.Api
 	var err rest_errors.RestErr
 
 	webapi := c.Query("webapi")

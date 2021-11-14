@@ -1,7 +1,7 @@
 package main
 
 import (
-  "github.com/katsun0921/portfolio_api/app"
+  "github.com/katsun0921/portfolio_api/src/app"
 )
 
 

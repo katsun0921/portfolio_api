@@ -3,16 +3,11 @@ package services
 import (
   "fmt"
   "github.com/katsun0921/go_utils/rest_errors"
+  "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
   "regexp"
   "strings"
   "time"
-)
-
-const (
-  ZENN string = "zenn"
-  TWITTER string = "twitter"
-  layout = "2006/01/02 15:00"
 )
 
 var (
@@ -20,17 +15,26 @@ var (
 )
 
 type apisServiceInterface interface {
-  GetApi() ([]*apis.Api, rest_errors.RestErr)
-  GetTwitterApi() ([]*apis.Api, rest_errors.RestErr)
+  GetApiAll() ([]*apis.Api, rest_errors.RestErr)
+  GetRss(service string) ([]*apis.Api, rest_errors.RestErr)
+  GetTwitter() ([]*apis.Api, rest_errors.RestErr)
 }
 
 type apisService struct {
 }
 
-func (*apisService) GetApi() ([]*apis.Api, rest_errors.RestErr) {
+func (*apisService) GetApiAll() ([]*apis.Api, rest_errors.RestErr) {
   api := &apis.Api{}
   var res []*apis.Api
-  rss, err := api.GetRss()
+
+  res = append(res, api)
+  return res, nil
+}
+
+func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
+  api := &apis.Api{}
+  var res []*apis.Api
+  rss, err := api.GetFeedApi(service)
   if err != nil {
     return nil, err
   }
@@ -43,13 +47,13 @@ func (*apisService) GetApi() ([]*apis.Api, rest_errors.RestErr) {
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
     t, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 MST", feed.Published)
     fmt.Println(feed.Published)
-    feedDate := t.Format(layout)
+    feedDate := t.Format(constants.DateLayout)
 
     key.Id = i
     key.Text = feed.Title + "\n" + itemPlainText
     key.Link = feed.Link
     key.DateCreated = feedDate
-    key.Service = ZENN
+    key.Service = constants.ZENN
 
     res = append(res, key)
   }
@@ -57,10 +61,11 @@ func (*apisService) GetApi() ([]*apis.Api, rest_errors.RestErr) {
   return res, nil
 }
 
-func (*apisService) GetTwitterApi() ([]*apis.Api, rest_errors.RestErr) {
+
+func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
   api := &apis.Api{}
   var res []*apis.Api
-  tweets, err := api.GetTwitter()
+  tweets, err := api.GetTwitterApi()
   if err != nil {
     return nil, err
   }
@@ -74,12 +79,12 @@ func (*apisService) GetTwitterApi() ([]*apis.Api, rest_errors.RestErr) {
     tweetLink := regLink.FindString(tweetText)
 
     t, _ := time.Parse("Mon Jan 2 15:04:05 MST 2006", tweet.CreatedAt)
-    tweetDate := t.Format(layout)
+    tweetDate := t.Format(constants.DateLayout)
     key.Id = i
     key.Text = tweetPlainText
     key.Link = tweetLink
     key.DateCreated = tweetDate
-    key.Service = TWITTER
+    key.Service = constants.TWITTER
 
     res = append(res, key)
   }

@@ -8,6 +8,7 @@ import (
   "github.com/joho/godotenv"
   "github.com/katsun0921/go_utils/logger"
   "github.com/katsun0921/go_utils/rest_errors"
+  "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/mmcdole/gofeed"
   "os"
   "strconv"
@@ -15,8 +16,15 @@ import (
 
 const feedZenn = "https://zenn.dev/katsun0921/feed"
 
-func (api *Api) GetRss() (*gofeed.Feed, rest_errors.RestErr) {
-	feed, err := gofeed.NewParser().ParseURL(feedZenn)
+func (api *Api) GetFeedApi(service string) (*gofeed.Feed, rest_errors.RestErr) {
+  var url string
+  switch service {
+  case constants.ZENN:
+    url = feedZenn
+  default:
+    return nil, rest_errors.NewInternalServerError("error not found rss service", errors.New("rss service error"))
+  }
+	feed, err := gofeed.NewParser().ParseURL(url)
 	if err != nil {
 		logger.Error("error when trying to rss", err)
     return nil, rest_errors.NewInternalServerError("error when trying to get rss api", errors.New("response error"))
@@ -25,7 +33,7 @@ func (api *Api) GetRss() (*gofeed.Feed, rest_errors.RestErr) {
 	return feed, nil
 }
 
-func (api *Api) GetTwitter() ([]twitter.Tweet, rest_errors.RestErr) {
+func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 
 	envErr := godotenv.Load()
 	if envErr != nil {
@@ -56,7 +64,7 @@ func (api *Api) GetTwitter() ([]twitter.Tweet, rest_errors.RestErr) {
 
 	tweets, httpResponse, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
 		UserID: toIntTwitterUserId,
-		Count:  2,
+		Count:  constants.MaxCount,
 	})
 
 	if err != nil {

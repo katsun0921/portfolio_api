@@ -2,7 +2,6 @@ package apis
 
 import (
   "errors"
-  "fmt"
   "github.com/gin-gonic/gin"
   "github.com/katsun0921/go_utils/logger"
   "github.com/katsun0921/go_utils/rest_errors"
@@ -17,7 +16,6 @@ func Get(c *gin.Context) {
 	var err rest_errors.RestErr
 
 	service := c.Query(constants.QueryService)
-	fmt.Println("query:",service)
 
   rssServices := [...]string{constants.ZENN}
 

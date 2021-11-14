@@ -27,6 +27,7 @@ func (*apisService) GetApiAll() ([]*apis.Api, rest_errors.RestErr) {
   api := &apis.Api{}
   var res []*apis.Api
 
+  fmt.Println("Get All Api")
   res = append(res, api)
   return res, nil
 }
@@ -40,18 +41,20 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
   }
 
   feeds := rss.Items
-  for i, feed := range feeds {
+  for i := 0; i < constants.MaxCount; i++ {
+    if i >= len(feeds) {
+      break
+    }
     key := &apis.Api{}
-    itemPlainText := feed.Description
+    itemPlainText := feeds[i].Description
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-    t, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 MST", feed.Published)
-    fmt.Println(feed.Published)
+    t, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 MST", feeds[i].Published)
     feedDate := t.Format(constants.DateLayout)
 
     key.Id = i
-    key.Text = feed.Title + "\n" + itemPlainText
-    key.Link = feed.Link
+    key.Text = feeds[i].Title + "\n" + itemPlainText
+    key.Link = feeds[i].Link
     key.DateCreated = feedDate
     key.Service = constants.ZENN
 
@@ -70,15 +73,19 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     return nil, err
   }
 
-  for i, tweet := range tweets {
+  for i := 0; i < constants.MaxCount; i++ {
+    if i >= len(tweets) {
+      break
+    }
+
     key := &apis.Api{}
-    tweetText := strings.ReplaceAll(tweet.Text, "\n", "")
+    tweetText := strings.ReplaceAll(tweets[i].Text, "\n", "")
     regLink := regexp.MustCompile("https:.*$")
     tweetPlainText := regLink.ReplaceAllString(tweetText,"")
     tweetPlainText = strings.TrimSpace(tweetPlainText)
     tweetLink := regLink.FindString(tweetText)
 
-    t, _ := time.Parse("Mon Jan 2 15:04:05 MST 2006", tweet.CreatedAt)
+    t, _ := time.Parse("Mon Jan 2 15:04:05 MST 2006", tweets[i].CreatedAt)
     tweetDate := t.Format(constants.DateLayout)
     key.Id = i
     key.Text = tweetPlainText

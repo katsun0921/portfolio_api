@@ -15,10 +15,10 @@ func Get(c *gin.Context) {
 	var resApi []*apis.Api
 	var err rest_errors.RestErr
 
-	webapi := c.Query("webapi")
-	fmt.Println("query:",webapi)
+	service := c.Query("service")
+	fmt.Println("query:",service)
 
-	switch webapi {
+	switch service {
     case "twitter":
       resApi, err = services.ApisService.GetTwitterApi()
     default:

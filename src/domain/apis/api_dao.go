@@ -24,20 +24,20 @@ func (api *Api) GetFeedApi(service string) (*gofeed.Feed, rest_errors.RestErr) {
   default:
     return nil, rest_errors.NewInternalServerError("error not found rss service", errors.New("rss service error"))
   }
-	feed, err := gofeed.NewParser().ParseURL(url)
-	if err != nil {
-		logger.Error("error when trying to rss", err)
+  feed, err := gofeed.NewParser().ParseURL(url)
+  if err != nil {
+    logger.Error("error when trying to rss", err)
     return nil, rest_errors.NewInternalServerError("error when trying to get rss api", errors.New("response error"))
-	}
+  }
 
-	return feed, nil
+  return feed, nil
 }
 
 func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 
-	envErr := godotenv.Load()
-	if envErr != nil {
-	  logger.Error("Error loading .env file", envErr)
+  envErr := godotenv.Load()
+  if envErr != nil {
+    logger.Error("Error loading .env file", envErr)
     return nil, rest_errors.NewInternalServerError("Error env file", envErr)
   }
 
@@ -47,29 +47,29 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
   twitterAccessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
   twitterUserId := os.Getenv("TWITTER_USER_ID")
 
-	config := oauth1.NewConfig(twitterApiKey, twitterApiKeySecret)
-	token := oauth1.NewToken(twitterAccessToken, twitterAccessTokenSecret)
-	// http.Client will automatically authorize Requests
-	httpClient := config.Client(oauth1.NoContext, token)
+  config := oauth1.NewConfig(twitterApiKey, twitterApiKeySecret)
+  token := oauth1.NewToken(twitterAccessToken, twitterAccessTokenSecret)
+  // http.Client will automatically authorize Requests
+  httpClient := config.Client(oauth1.NoContext, token)
 
-	// twitter client
-	client := twitter.NewClient(httpClient)
+  // twitter client
+  client := twitter.NewClient(httpClient)
 
-	// Status Show
-	toIntTwitterUserId, errUserId := strconv.ParseInt(twitterUserId, 10, 64)
-	if errUserId != nil {
+  // Status Show
+  toIntTwitterUserId, errUserId := strconv.ParseInt(twitterUserId, 10, 64)
+  if errUserId != nil {
     logger.Error("Error loading User Id from .env file", errUserId)
     return nil, rest_errors.NewInternalServerError("twitter server error to user id", errUserId)
   }
 
-	tweets, httpResponse, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
-		UserID: toIntTwitterUserId,
-		Count:  constants.MaxCount,
-	})
+  tweets, httpResponse, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
+    UserID: toIntTwitterUserId,
+    Count:  constants.MaxCount,
+  })
 
-	if err != nil {
-		logger.Error(fmt.Sprintf("twitter server error %d", httpResponse.StatusCode), err)
-		return nil, rest_errors.NewInternalServerError(fmt.Sprintf("twitter server error %d", httpResponse.StatusCode), err)
-	}
-	return tweets, nil
+  if err != nil {
+    logger.Error(fmt.Sprintf("twitter server error %d", httpResponse.StatusCode), err)
+    return nil, rest_errors.NewInternalServerError(fmt.Sprintf("twitter server error %d", httpResponse.StatusCode), err)
+  }
+  return tweets, nil
 }

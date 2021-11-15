@@ -12,10 +12,10 @@ import (
 )
 
 func Get(c *gin.Context) {
-	var resApi []*apis.Api
-	var err rest_errors.RestErr
+  var resApi []*apis.Api
+  var err rest_errors.RestErr
 
-	service := c.Query(constants.QueryService)
+  service := c.Query(constants.QueryService)
 
   rssServices := [...]string{constants.ZENN}
 
@@ -35,12 +35,12 @@ func Get(c *gin.Context) {
     resApi, err = services.ApisService.GetApiAll()
   }
 
-	if err != nil {
-		logger.Error("error when trying to api request", err)
-		restErr := rest_errors.NewBadRequestError("invalid json error", errors.New("json error"))
-		if restErr != nil {
-		  return
+  if err != nil {
+    logger.Error("error when trying to api request", err)
+    restErr := rest_errors.NewBadRequestError("invalid json error", errors.New("json error"))
+    if restErr != nil {
+      return
     }
-	}
-	c.JSON(http.StatusOK, resApi)
+  }
+  c.JSON(http.StatusOK, resApi)
 }

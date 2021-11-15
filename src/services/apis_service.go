@@ -57,7 +57,7 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
     itemPlainText := feeds[i].Description
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-    t, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 MST", feeds[i].Published)
+    t, _ := time.Parse(constants.TimeLayout, feeds[i].Published)
     feedDate := t.Format(constants.DateLayout)
 
     key.Text = feeds[i].Title + "\n" + itemPlainText
@@ -92,7 +92,7 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     tweetPlainText = strings.TrimSpace(tweetPlainText)
     tweetLink := regLink.FindString(tweetText)
 
-    t, _ := time.Parse("Mon Jan 2 15:04:05 MST 2006", tweets[i].CreatedAt)
+    t, _ := time.Parse(constants.TimeLayout, tweets[i].CreatedAt)
     tweetDate := t.Format(constants.DateLayout)
     key.Text = tweetPlainText
     key.Link = tweetLink

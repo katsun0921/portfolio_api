@@ -1,6 +1,7 @@
 package services
 
 import (
+  "fmt"
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
@@ -57,7 +58,8 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
     itemPlainText := feeds[i].Description
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-    t, _ := time.Parse(constants.TimeLayout, feeds[i].Published)
+    fmt.Println(feeds[1].Published)
+    t, _ := time.Parse(constants.TimeLayoutRFC1123, feeds[i].Published)
     feedDate := t.Format(constants.DateLayout)
 
     key.Text = feeds[i].Title + "\n" + itemPlainText
@@ -80,19 +82,28 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     return nil, err
   }
 
-  for i := 0; i < constants.MaxCount; i++ {
+  i := 0
+  maxCount := constants.MaxCount
+  for i < maxCount {
     if i >= len(tweets) {
       break
+    }
+    isRetweeted := tweets[i].Retweeted; if isRetweeted {
+      i++
+      maxCount++
+      continue
     }
 
     key := &apis.Api{}
     tweetText := strings.ReplaceAll(tweets[i].Text, "\n", "")
-    regLink := regexp.MustCompile("https:.*$")
+    regLink := regexp.MustCompile("https://.*$")
     tweetPlainText := regLink.ReplaceAllString(tweetText, "")
     tweetPlainText = strings.TrimSpace(tweetPlainText)
-    tweetLink := regLink.FindString(tweetText)
+    tweetScreenName := tweets[i].User.ScreenName
+    tweetStatus := tweets[i].IDStr
+    tweetLink := constants.TWITTERDomain + "/" + tweetScreenName + "/status/" + tweetStatus
 
-    t, _ := time.Parse(constants.TimeLayout, tweets[i].CreatedAt)
+    t, _ := time.Parse(constants.TimeLayoutUnixDate, tweets[i].CreatedAt)
     tweetDate := t.Format(constants.DateLayout)
     key.Text = tweetPlainText
     key.Link = tweetLink
@@ -101,6 +112,7 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     key.Service = constants.TWITTER
 
     res = append(res, key)
+    i++
   }
 
   return res, nil

@@ -101,7 +101,7 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     tweetPlainText = strings.TrimSpace(tweetPlainText)
     tweetScreenName := tweets[i].User.ScreenName
     tweetStatus := tweets[i].IDStr
-    tweetLink := constants.TWITTERDomain + "/" + tweetScreenName + "/status/" + tweetStatus
+    tweetLink := constants.TwitterDomain + "/" + tweetScreenName + "/status/" + tweetStatus
 
     t, _ := time.Parse(constants.TimeLayoutUnixDate, tweets[i].CreatedAt)
     tweetDate := t.Format(constants.DateLayout)

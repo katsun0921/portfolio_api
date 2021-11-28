@@ -3,7 +3,7 @@ package constants
 const (
 	ZENN               = "zenn"
 	TWITTER            = "twitter"
-	TWITTERDomain      = "https://twitter.com"
+	TwitterDomain      = "https://twitter.com"
 	DateLayout         = "2006/01/02 15:00"
 	QueryService       = "service"
 	MaxCount           = 20

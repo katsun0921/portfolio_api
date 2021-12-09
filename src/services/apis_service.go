@@ -1,7 +1,6 @@
 package services
 
 import (
-  "fmt"
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
@@ -33,8 +32,8 @@ func (api *apisService) GetApiAll() ([]*apis.Api, rest_errors.RestErr) {
   }
   zenns, errZenns := api.GetRss(constants.ZENN)
   if errZenns != nil {
-		return nil, errZenns
-	}
+    return nil, errZenns
+  }
   res = append(res, tweets...)
   res = append(res, zenns...)
   sort.SliceStable(res, func(i, j int) bool { return res[i].DateUnix > res[j].DateUnix })
@@ -58,7 +57,6 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
     itemPlainText := feeds[i].Description
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-    fmt.Println(feeds[1].Published)
     t, _ := time.Parse(constants.TimeLayoutRFC1123, feeds[i].Published)
     feedDate := t.Format(constants.DateLayout)
 
@@ -88,7 +86,8 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     if i >= len(tweets) {
       break
     }
-    isRetweeted := tweets[i].Retweeted; if isRetweeted {
+    isRetweeted := tweets[i].Retweeted
+    if isRetweeted {
       i++
       maxCount++
       continue

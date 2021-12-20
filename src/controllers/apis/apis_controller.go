@@ -7,7 +7,7 @@ import (
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
-  "github.com/katsun0921/portfolio_api/src/lib"
+  "github.com/katsun0921/portfolio_api/src/services"
   "net/http"
 )
 
@@ -28,11 +28,11 @@ func Get(c *gin.Context) {
   }
 
   if service == constants.TWITTER {
-    resApi, err = lib.ApisService.GetTwitter()
+    resApi, err = services.ApisService.GetTwitter()
   } else if isRss {
-    resApi, err = lib.ApisService.GetRss(service)
+    resApi, err = services.ApisService.GetRss(service)
   } else {
-    resApi, err = lib.ApisService.GetApiAll()
+    resApi, err = services.ApisService.GetApiAll()
   }
 
   if err != nil {

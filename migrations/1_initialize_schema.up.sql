@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS `blog_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin ;
+
 CREATE TABLE IF NOT EXISTS blog_db.articles (
   `id` int NOT NULL AUTO_INCREMENT,
   `text` text,

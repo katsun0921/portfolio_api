@@ -31,3 +31,9 @@ go get -tags 'mysql' -u github.com/golang-migrate/migrate/cmd/migrate
 ### MySQL
 
 <https://github.com/golang-migrate/migrate/tree/master/database/mysql>
+
+### Run
+
+```bash
+migrate -source file://migrations/ -database 'mysql://root:@tcp(127.0.0.1:3306)/blog_db' up 1
+```

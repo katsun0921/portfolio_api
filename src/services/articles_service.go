@@ -33,13 +33,13 @@ func (s *articlesService) GetArticle(articleId int64) (*articles.Article, rest_e
 
 func (s *articlesService) CreateArticle(Article articles.Article, api *apis.Api) (*articles.Article, rest_errors.RestErr) {
 
-  fmt.Println(api)
+  fmt.Println(api.Text)
 
   if err := Article.Validate(); err != nil {
     return nil, err
   }
 
-  Article.Text = "text"
+  Article.Text = api.Text
   Article.DateCreated = date_utils.GetNowDBFormat()
   if err := Article.Save(); err != nil {
     return nil, err

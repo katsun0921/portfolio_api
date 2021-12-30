@@ -23,7 +23,7 @@ func init() {
 	host := os.Getenv("MYSQL_BLOG_HOST")
 	schema := os.Getenv("MYSQL_BLOG_SCHEMA")
 
-	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8",
+	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4",
 		username, password, host, schema,
 	)
 	log.Println(fmt.Sprintf("about to connect to %s", dataSourceName))

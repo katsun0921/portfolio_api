@@ -71,18 +71,15 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 
 	result := &articles.Article{}
 
-	dataArticlesByService, dbErr := result.FindByLatestArticleId("twitter")
+	articleId, dbErr := result.FindByLatestArticleId(constants.TWITTER)
 	if dbErr != nil {
 		logger.Error("Error loading Twitter Sever", dbErr)
 		return nil, rest_errors.NewInternalServerError("twitter server", dbErr)
 	}
 
 	// Set env value if not find article id
-	articleId := ""
-	if len(dataArticlesByService) == 0 {
+	if articleId == "" {
 		articleId = os.Getenv("TWITTER_LAST_ID")
-	} else {
-		articleId = dataArticlesByService[0].ArticleId
 	}
 
 	articleIdInt64, _ := strconv.ParseInt(articleId, 10, 64)

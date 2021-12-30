@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"github.com/katsun0921/go_utils/logger"
 	"github.com/katsun0921/go_utils/rest_errors"
-  "github.com/katsun0921/portfolio_api/src/datasources/mysql/blog_db"
+	"github.com/katsun0921/portfolio_api/src/datasources/mysql/blog_db"
 )
 
 const (
-	queryInsertArticle   = "INSERT INTO articles(text, link, service, article_id, data_created, created_at) VALUES(?, ?, ?, ?, ?, ?);"
-	queryGetArticle      = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE id=?;"
-	queryFindByArticleId = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE article_id=?;"
+	queryInsertArticle         = "INSERT INTO articles(text, link, service, article_id, data_created, created_at) VALUES(?, ?, ?, ?, ?, ?);"
+	queryGetArticle            = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE id=?;"
+	queryFindByArticleId       = "SELECT id, article_id, data_created,created_at FROM articles WHERE article_id=? AND service=?;"
+	queryFindByService         = "SELECT * FROM articles WHERE service=?;"
+	queryFindByLatestArticleId = "SELECT id, service, article_id, data_created FROM blog_db.articles WHERE data_created = (SELECT MAX(data_created) FROM blog_db.articles AS us WHERE blog_db.articles.service=?);"
 )
 
 func (article *Article) Get() rest_errors.RestErr {
@@ -40,7 +42,7 @@ func (article *Article) Save() rest_errors.RestErr {
 	}
 	defer stmt.Close()
 
-	insertResult, saveErr := stmt.Exec(article.Text, article.Link, article.Service,article. ArticleId, article.DateCreated, article.CreatedAt)
+	insertResult, saveErr := stmt.Exec(article.Text, article.Link, article.Service, article.ArticleId, article.DateCreated, article.CreatedAt)
 	if saveErr != nil {
 		logger.Error("error when trying to save article", saveErr)
 		return rest_errors.NewInternalServerError("error when trying to save article", errors.New("database error"))
@@ -56,33 +58,89 @@ func (article *Article) Save() rest_errors.RestErr {
 	return nil
 }
 
-func (article *Article) FindByArticleId(articleId string) ([]Article, rest_errors.RestErr) {
-  stmt, err := blog_db.Client.Prepare(queryFindByArticleId)
-  if err != nil {
-    logger.Error("error when trying to prepare find users by status statement", err)
-    return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
-  }
-  defer stmt.Close()
+func (article *Article) FindByArticleId(articleId string, service string) ([]Article, rest_errors.RestErr) {
+	stmt, err := blog_db.Client.Prepare(queryFindByArticleId)
+	if err != nil {
+		logger.Error("error when trying to prepare find blog_db by status statement", err)
+		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+	}
+	defer stmt.Close()
 
-  rows, err := stmt.Query(articleId)
-  if err != nil {
-    logger.Error("error when trying to find users by status", err)
-    return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
-  }
-  defer rows.Close()
+	rows, err := stmt.Query(articleId, service)
+	if err != nil {
+		logger.Error("error when trying to find blog_db by status", err)
+		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+	}
+	defer rows.Close()
 
-  results := make([]Article, 0)
-  for rows.Next() {
-    var article Article
-    if err := rows.Scan(&article.Id, &article.Text, &article.Link, &article.ArticleId, &article.DateCreated); err != nil {
-      logger.Error("error when scan user row into user struct", err)
-      return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
-    }
-    results = append(results, article)
-  }
+	results := make([]Article, 0)
+	for rows.Next() {
+		var article Article
+		if err := rows.Scan(&article.Id, &article.ArticleId, &article.DateCreated, &article.CreatedAt); err != nil {
+			logger.Error("error when scan article row into blog_db struct", err)
+			return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+		}
+		results = append(results, article)
+	}
 
-  if len(results) == 0 {
-    return nil, rest_errors.NewNotFoundError(fmt.Sprintf("no users matching status %s", err), errors.New("database error"))
-  }
-  return results, nil
+	return results, nil
+}
+
+func (article *Article) FindByService(service string) ([]Article, rest_errors.RestErr) {
+	stmt, err := blog_db.Client.Prepare(queryFindByService)
+	if err != nil {
+		logger.Error("error when trying to prepare find blog_db by status statement", err)
+		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(service)
+	if err != nil {
+		logger.Error("error when trying to find blog_db by status", err)
+		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+	}
+	defer rows.Close()
+
+	results := make([]Article, 0)
+	for rows.Next() {
+		var article Article
+		if err := rows.Scan(&article.Id, &article.Text, &article.Link, &article.Service, &article.ArticleId, &article.DateCreated, &article.CreatedAt); err != nil {
+			logger.Error("error when scan article row into blog_db struct", err)
+			return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+		}
+		results = append(results, article)
+	}
+
+	if len(results) == 0 {
+		return nil, rest_errors.NewNotFoundError(fmt.Sprintf("no users matching status %s", err), errors.New("database error"))
+	}
+	return results, nil
+}
+
+func (article *Article) FindByLatestArticleId(service string) ([]Article, rest_errors.RestErr) {
+	stmt, err := blog_db.Client.Prepare(queryFindByLatestArticleId)
+	if err != nil {
+		logger.Error("error when trying to prepare find blog_db by status statement", err)
+		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(service)
+	if err != nil {
+		logger.Error("error when trying to find blog_db by status", err)
+		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+	}
+	defer rows.Close()
+
+	results := make([]Article, 0)
+	for rows.Next() {
+		var article Article
+		if err := rows.Scan(&article.Id, &article.Service, &article.ArticleId, &article.DateCreated); err != nil {
+			logger.Error("error when scan article row into blog_db struct", err)
+			return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
+		}
+		results = append(results, article)
+	}
+
+	return results, nil
 }

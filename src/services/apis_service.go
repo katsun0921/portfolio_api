@@ -1,7 +1,6 @@
 package services
 
 import (
-  "fmt"
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
@@ -58,7 +57,6 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
     itemPlainText := feeds[i].Description
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-    fmt.Println(feeds[1].Published)
     t, _ := time.Parse(constants.TimeLayoutRFC1123, feeds[i].Published)
     feedDate := t.Format(constants.DateLayout)
 

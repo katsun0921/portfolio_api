@@ -1,6 +1,9 @@
-CREATE TABLE `blog_db`.`aritcles` (
-  `id` INT NOT NULL,
-  `text` TEXT NULL,
-  `type` VARCHAR(255) NULL,
-  `created_at` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`, `created_at`));
+CREATE TABLE IF NOT EXISTS blog_db.articles (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `text` text,
+  `link` text,
+  `service` varchar(255) DEFAULT NULL,
+  `article_id` varchar(255) DEFAULT NULL,
+  `created_at` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`, `created_at`)
+);

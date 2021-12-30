@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS blog_db;
+DROP TABLE IF EXISTS articles;

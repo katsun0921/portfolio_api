@@ -37,7 +37,7 @@ func Get(c *gin.Context) {
 
   if err != nil {
     logger.Error("error when trying to api request", err)
-    restErr := rest_errors.NewBadRequestError("invalid json error", errors.New("json error"))
+    restErr := rest_errors.NewBadRequestError("invalid json error for apis", errors.New("json error"))
     if restErr != nil {
       return
     }

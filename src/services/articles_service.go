@@ -47,8 +47,3 @@ func (s *articlesService) CreateArticle(Article articles.Article, api *apis.Api)
 
 	return &Article, nil
 }
-
-func (s *articlesService) searchArticle(articleId string, service string) ([]articles.Article, rest_errors.RestErr) {
-	result := &articles.Article{}
-	return result.FindByArticleId(articleId, service)
-}

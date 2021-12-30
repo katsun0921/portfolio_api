@@ -11,7 +11,6 @@ import (
 const (
 	queryInsertArticle         = "INSERT INTO articles(text, link, service, article_id, data_created, created_at) VALUES(?, ?, ?, ?, ?, ?);"
 	queryGetArticle            = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE id=?;"
-	queryFindByArticleId       = "SELECT id, article_id, data_created,created_at FROM articles WHERE article_id=? AND service=?;"
 	queryFindByService         = "SELECT * FROM articles WHERE service=?;"
 	queryFindByLatestArticleId = "SELECT id, service, article_id, data_created FROM blog_db.articles WHERE data_created = (SELECT MAX(data_created) FROM blog_db.articles AS us WHERE blog_db.articles.service=?);"
 )
@@ -56,34 +55,6 @@ func (article *Article) Save() rest_errors.RestErr {
 
 	article.Id = articleId
 	return nil
-}
-
-func (article *Article) FindByArticleId(articleId string, service string) ([]Article, rest_errors.RestErr) {
-	stmt, err := blog_db.Client.Prepare(queryFindByArticleId)
-	if err != nil {
-		logger.Error("error when trying to prepare find blog_db by status statement", err)
-		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
-	}
-	defer stmt.Close()
-
-	rows, err := stmt.Query(articleId, service)
-	if err != nil {
-		logger.Error("error when trying to find blog_db by status", err)
-		return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
-	}
-	defer rows.Close()
-
-	results := make([]Article, 0)
-	for rows.Next() {
-		var article Article
-		if err := rows.Scan(&article.Id, &article.ArticleId, &article.DateCreated, &article.CreatedAt); err != nil {
-			logger.Error("error when scan article row into blog_db struct", err)
-			return nil, rest_errors.NewInternalServerError("error when trying to find by status", errors.New("database error"))
-		}
-		results = append(results, article)
-	}
-
-	return results, nil
 }
 
 func (article *Article) FindByService(service string) ([]Article, rest_errors.RestErr) {

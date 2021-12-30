@@ -86,9 +86,6 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 	}
 
 	articleIdInt64, _ := strconv.ParseInt(articleId, 10, 64)
-	//dataCreated := dataArticlesByService[0].DateCreated
-
-	fmt.Println(articleId)
 
 	p := TUserTimelineParams{
 		UserID:  toIntTwitterUserId,

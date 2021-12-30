@@ -60,6 +60,7 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
     t, _ := time.Parse(constants.TimeLayoutRFC1123, feeds[i].Published)
     feedDate := t.Format(constants.DateLayout)
 
+    key.Id = feeds[i].GUID
     key.Text = feeds[i].Title + "\n" + itemPlainText
     key.Link = feeds[i].Link
     key.DateCreated = feedDate
@@ -103,6 +104,7 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
 
     t, _ := time.Parse(constants.TimeLayoutUnixDate, tweets[i].CreatedAt)
     tweetDate := t.Format(constants.DateLayout)
+    key.Id = tweets[i].IDStr
     key.Text = tweetPlainText
     key.Link = tweetLink
     key.DateCreated = tweetDate

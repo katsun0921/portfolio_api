@@ -42,6 +42,7 @@ func (s *articlesService) CreateArticle(Article articles.Article, api *apis.Api)
   Article.Text = api.Text
   Article.Link = api.Link
   Article.Service = api.Service
+  Article.ArticleId = api.Id
   Article.DateCreated = api.DateCreated
   Article.CreatedAt = date_utils.GetNowDBFormat()
   if err := Article.Save(); err != nil {

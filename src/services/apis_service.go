@@ -5,7 +5,8 @@ import (
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/src/constants"
 	"github.com/katsun0921/portfolio_api/src/domain/apis"
-	"regexp"
+  "github.com/katsun0921/portfolio_api/src/domain/articles"
+  "regexp"
 	"sort"
 	"strings"
 	"time"
@@ -43,30 +44,37 @@ func (api *apisService) GetApiAll() ([]*apis.Api, rest_errors.RestErr) {
 
 func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
 	api := &apis.Api{}
+  article := &articles.Article{}
 	var res []*apis.Api
 	rss, err := api.GetFeedApi(service)
 	if err != nil {
 		return nil, err
 	}
 
+	articleId, articleErr := article.FindByLatestArticleId(service)
+	if articleErr != nil {
+	  return nil, articleErr
+  }
+
 	feeds := rss.Items
-	for i := 0; i < constants.ArticlesMaxCount; i++ {
-		if i >= len(feeds) {
-			break
-		}
+	for _, feed := range feeds {
+
+	  if feed.GUID == articleId {
+	    break
+    }
 		key := &apis.Api{}
-		itemPlainText := feeds[i].Description
+		itemPlainText := feed.Description
 		itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
 		itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-		t, _ := time.Parse(constants.TimeLayoutRFC1123, feeds[i].Published)
+		t, _ := time.Parse(constants.TimeLayoutRFC1123, feed.Published)
 		feedDate := t.Format(constants.DateLayout)
 
-		key.Id = feeds[i].GUID
-		key.Text = feeds[i].Title + "\n" + itemPlainText
-		key.Link = feeds[i].Link
+		key.Id = feed.GUID
+		key.Text = feed.Title + "\n" + itemPlainText
+		key.Link = feed.Link
 		key.DateCreated = feedDate
 		key.DateUnix = int(t.Unix())
-		key.Service = constants.ZENN
+		key.Service = service
 
 		res = append(res, key)
 	}

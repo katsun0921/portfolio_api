@@ -12,7 +12,7 @@ const (
 	queryInsertArticle         = "INSERT INTO articles(text, link, service, article_id, data_created, created_at) VALUES(?, ?, ?, ?, ?, ?);"
 	queryGetArticle            = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE id=?;"
 	queryFindByService         = "SELECT * FROM articles WHERE service=?;"
-	queryFindByLatestArticleId = "SELECT id, service, article_id, data_created FROM blog_db.articles WHERE data_created = (SELECT MAX(data_created) FROM blog_db.articles AS us WHERE blog_db.articles.service=?);"
+	queryFindByLatestArticleId = "SELECT id, service, article_id, data_created FROM blog_db.articles WHERE data_created = (SELECT MAX(data_created) FROM blog_db.articles WHERE blog_db.articles.service=?);"
 )
 
 func (article *Article) Get() rest_errors.RestErr {

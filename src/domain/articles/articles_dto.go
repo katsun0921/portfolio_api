@@ -12,6 +12,7 @@ type Article struct {
 	Service     string `json:"service"`
 	ArticleId   string `json:"article_id"`
 	DateCreated string `json:"date_created"`
+  CreatedAt string `json:"created_at"`
 }
 
 type Articles []Article

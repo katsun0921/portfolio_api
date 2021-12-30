@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	queryInsertArticle   = "INSERT INTO articles(text, link, service, article_id, created_at) VALUES(?, ?, ?, ?, ?);"
+	queryInsertArticle   = "INSERT INTO articles(text, link, service, article_id, data_created, created_at) VALUES(?, ?, ?, ?, ?, ?);"
 	queryGetArticle      = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE id=?;"
 	queryFindByArticleId = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE article_id=?;"
 )
@@ -40,7 +40,7 @@ func (article *Article) Save() rest_errors.RestErr {
 	}
 	defer stmt.Close()
 
-	insertResult, saveErr := stmt.Exec(article.Text, article.Link, article.Service,article. ArticleId, article.DateCreated)
+	insertResult, saveErr := stmt.Exec(article.Text, article.Link, article.Service,article. ArticleId, article.DateCreated, article.CreatedAt)
 	if saveErr != nil {
 		logger.Error("error when trying to save article", saveErr)
 		return rest_errors.NewInternalServerError("error when trying to save article", errors.New("database error"))

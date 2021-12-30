@@ -49,7 +49,7 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
   }
 
   feeds := rss.Items
-  for i := 0; i < constants.MaxCount; i++ {
+  for i := 0; i < constants.ArticlesMaxCount; i++ {
     if i >= len(feeds) {
       break
     }
@@ -81,7 +81,7 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
   }
 
   i := 0
-  maxCount := constants.MaxCount
+  maxCount := constants.ArticlesMaxCount
   for i < maxCount {
     if i >= len(tweets) {
       break

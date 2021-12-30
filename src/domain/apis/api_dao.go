@@ -64,7 +64,7 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 
   tweets, httpResponse, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{
     UserID: toIntTwitterUserId,
-    Count:  constants.MaxCount,
+    Count:  constants.ArticlesMaxCount,
   })
 
   if err != nil {

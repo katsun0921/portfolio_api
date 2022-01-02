@@ -10,27 +10,37 @@ import (
 
 const (
 	queryInsertArticle         = "INSERT INTO articles(text, link, service, article_id, data_created, created_at) VALUES(?, ?, ?, ?, ?, ?);"
-	queryGetArticle            = "SELECT id, text, link, service, article_id, created_at FROM articles WHERE id=?;"
+	queryGetArticle            = "SELECT text, link, service, data_created FROM articles LIMIT 20"
 	queryFindByService         = "SELECT * FROM articles WHERE service=?;"
 	queryFindByLatestArticleId = "SELECT id, service, article_id, data_created FROM blog_db.articles WHERE data_created = (SELECT MAX(data_created) FROM blog_db.articles WHERE blog_db.articles.service=?);"
 )
 
-func (article *Article) Get() rest_errors.RestErr {
+func (article *Article) Get() ( []Article, rest_errors.RestErr) {
 	stmt, err := blog_db.Client.Prepare(queryGetArticle)
 	if err != nil {
 		logger.Error("error when trying to prepare get article statement", err)
-		return rest_errors.NewInternalServerError("error when trying to get article", errors.New("database error"))
+		return nil, rest_errors.NewInternalServerError("error when trying to get article", errors.New("database error"))
 	}
 	defer stmt.Close()
 
-	result := stmt.QueryRow(article.Id)
+  rows, err := stmt.Query()
+  if err != nil {
+    logger.Error("error when trying to get blog_db", err)
+    return nil, rest_errors.NewInternalServerError("error when trying to get", errors.New("database error"))
+  }
+  defer rows.Close()
 
-	if getErr := result.Scan(&article.Id, &article.Text, &article.Link, &article.Service, &article.ArticleId, &article.DateCreated); getErr != nil {
-		logger.Error("error when trying to get article by id", getErr)
-		return rest_errors.NewInternalServerError("error when trying to get article", errors.New("database error"))
-	}
+  results := make([]Article, 0)
+  for rows.Next() {
+    var article Article
+    if err := rows.Scan(&article.Text, &article.Link, &article.Service,  &article.DateCreated); err != nil {
+      logger.Error("error when scan queryGetArticle to article row into blog_db", err)
+      return nil, rest_errors.NewInternalServerError("error when trying to get", errors.New("database error"))
+    }
+    results = append(results, article)
+  }
 
-	return nil
+	return results, nil
 }
 
 func (article *Article) Save() rest_errors.RestErr {

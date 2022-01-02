@@ -9,6 +9,6 @@ import (
 func mapUrls() {
   router.GET("/ping", ping.Ping)
   router.GET("/apis", apis.Get)
+  router.GET("/articles", articles.Get)
   router.POST("/articles", articles.Create)
-
 }

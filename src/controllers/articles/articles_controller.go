@@ -10,6 +10,17 @@ import (
   "net/http"
 )
 
+func Get(c *gin.Context) {
+
+  article, getErr := services.ArticlesService.GetArticleAll()
+  if getErr != nil {
+    c.JSON(getErr.Status(), getErr)
+    return
+  }
+
+  c.JSON(http.StatusOK, article)
+}
+
 func Create(c *gin.Context) {
   var article articles.Article
   var resApis []*apis.Api

@@ -4,6 +4,7 @@ import (
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
+  "github.com/katsun0921/portfolio_api/src/domain/articles"
   "regexp"
   "sort"
   "strings"
@@ -42,29 +43,37 @@ func (api *apisService) GetApiAll() ([]*apis.Api, rest_errors.RestErr) {
 
 func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
   api := &apis.Api{}
+  article := &articles.Article{}
   var res []*apis.Api
   rss, err := api.GetFeedApi(service)
   if err != nil {
     return nil, err
   }
 
+  articleId, articleErr := article.FindByLatestArticleId(service)
+  if articleErr != nil {
+    return nil, articleErr
+  }
+
   feeds := rss.Items
-  for i := 0; i < constants.MaxCount; i++ {
-    if i >= len(feeds) {
+  for _, feed := range feeds {
+
+    if feed.GUID == articleId {
       break
     }
     key := &apis.Api{}
-    itemPlainText := feeds[i].Description
+    itemPlainText := feed.Description
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-    t, _ := time.Parse(constants.TimeLayoutRFC1123, feeds[i].Published)
+    t, _ := time.Parse(constants.TimeLayoutRFC1123, feed.Published)
     feedDate := t.Format(constants.DateLayout)
 
-    key.Text = feeds[i].Title + "\n" + itemPlainText
-    key.Link = feeds[i].Link
+    key.Id = feed.GUID
+    key.Text = feed.Title + "\n" + itemPlainText
+    key.Link = feed.Link
     key.DateCreated = feedDate
     key.DateUnix = int(t.Unix())
-    key.Service = constants.ZENN
+    key.Service = service
 
     res = append(res, key)
   }
@@ -80,30 +89,24 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     return nil, err
   }
 
-  i := 0
-  maxCount := constants.MaxCount
-  for i < maxCount {
-    if i >= len(tweets) {
-      break
-    }
-    isRetweeted := tweets[i].Retweeted
+  for _, tweet := range tweets {
+    isRetweeted := tweet.Retweeted
     if isRetweeted {
-      i++
-      maxCount++
       continue
     }
 
     key := &apis.Api{}
-    tweetText := strings.ReplaceAll(tweets[i].Text, "\n", "")
+    tweetText := strings.ReplaceAll(tweet.Text, "\n", "")
     regLink := regexp.MustCompile("https://.*$")
     tweetPlainText := regLink.ReplaceAllString(tweetText, "")
     tweetPlainText = strings.TrimSpace(tweetPlainText)
-    tweetScreenName := tweets[i].User.ScreenName
-    tweetStatus := tweets[i].IDStr
+    tweetScreenName := tweet.User.ScreenName
+    tweetStatus := tweet.IDStr
     tweetLink := constants.TwitterDomain + "/" + tweetScreenName + "/status/" + tweetStatus
 
-    t, _ := time.Parse(constants.TimeLayoutUnixDate, tweets[i].CreatedAt)
+    t, _ := time.Parse(constants.TimeLayoutUnixDate, tweet.CreatedAt)
     tweetDate := t.Format(constants.DateLayout)
+    key.Id = tweet.IDStr
     key.Text = tweetPlainText
     key.Link = tweetLink
     key.DateCreated = tweetDate
@@ -111,7 +114,6 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
     key.Service = constants.TWITTER
 
     res = append(res, key)
-    i++
   }
 
   return res, nil

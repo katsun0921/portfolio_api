@@ -1,6 +1,7 @@
 package apis
 
 type Api struct {
+  Id          string `json:"id"`
   Text        string `json:"text"`
   Link        string `json:"link"`
   Service     string `json:"service"`

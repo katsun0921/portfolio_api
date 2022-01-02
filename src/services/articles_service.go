@@ -11,7 +11,7 @@ var (
 	ArticlesService articlesServiceInterface = &articlesService{}
 )
 
-type TArticleAll struct {
+type TResArticle struct {
   Id          int    `json:"id"`
   Text        string `json:"text"`
   Link        string `json:"link"`
@@ -25,19 +25,19 @@ type articlesService struct {
 
 type (
 	articlesServiceInterface interface {
-		GetArticleAll() ([]TArticleAll, rest_errors.RestErr)
+		GetArticleAll() ([]TResArticle, rest_errors.RestErr)
 		CreateArticle(articles.Article, *apis.Api) (*articles.Article, rest_errors.RestErr)
 	}
 )
 
-func (s *articlesService) GetArticleAll() ([]TArticleAll, rest_errors.RestErr) {
+func (s *articlesService) GetArticleAll() ([]TResArticle, rest_errors.RestErr) {
 	result := &articles.Article{}
-	var res TArticleAll
+	var res TResArticle
 	resArticles, err := result.Get()
 	if err != nil {
 		return nil, err
 	}
-	articleAll := make([]TArticleAll, 0)
+	articleAll := make([]TResArticle, 0)
 	for i, article := range resArticles {
 		res.Id = i
 		res.Text = article.Text

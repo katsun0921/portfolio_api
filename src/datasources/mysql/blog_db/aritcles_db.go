@@ -18,10 +18,10 @@ func init() {
 	if errEnv != nil {
 		log.Fatal("Error loading .env file")
 	}
-	username := os.Getenv("MYSQL_BLOG_USERNAME")
-	password := os.Getenv("MYSQL_BLOG_PASSWORD")
-	host := os.Getenv("MYSQL_BLOG_HOST")
-	schema := os.Getenv("MYSQL_BLOG_SCHEMA")
+	username := os.Getenv("MYSQL_USERNAME")
+	password := os.Getenv("MYSQL_PASS")
+	host := os.Getenv("MYSQL_HOST")
+	schema := os.Getenv("MYSQL_DATANAME")
 
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4",
 		username, password, host, schema,

@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/katsun0921/portfolio_api/src/controllers/apis"
+  "github.com/katsun0921/portfolio_api/src/controllers/apis"
   "github.com/katsun0921/portfolio_api/src/controllers/articles"
   "github.com/katsun0921/portfolio_api/src/controllers/ping"
 )

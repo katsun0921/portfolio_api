@@ -19,7 +19,7 @@ func init() {
 		log.Fatal("Error loading .env file")
 	}
 	username := os.Getenv("MYSQL_USERNAME")
-	password := os.Getenv("MYSQL_PASS")
+	password := os.Getenv("MYSQL_PASSWORD")
 	host := os.Getenv("MYSQL_HOST")
 	schema := os.Getenv("MYSQL_DATANAME")
 

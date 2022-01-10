@@ -18,3 +18,6 @@
 
 # enviroment file
 *.env
+
+# Build file
+main

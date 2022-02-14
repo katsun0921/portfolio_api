@@ -15,8 +15,6 @@ import (
 	"strconv"
 )
 
-const feedZenn = "https://zenn.dev/katsun0921/feed"
-
 type TUserTimelineParams struct {
 	UserID  int64
 	Count   int
@@ -27,7 +25,7 @@ func (api *Api) GetFeedApi(service string) (*gofeed.Feed, rest_errors.RestErr) {
 	var url string
 	switch service {
 	case constants.ZENN:
-		url = feedZenn
+		url = constants.FeedZenn
 	default:
 		return nil, rest_errors.NewInternalServerError("error not found rss service", errors.New("rss service error"))
 	}

@@ -2,6 +2,7 @@ package constants
 
 const (
 	ZENN               = "zenn"
+	FeedZenn           = "https://zenn.dev/katsun0921/feed"
 	TWITTER            = "twitter"
 	TwitterDomain      = "https://twitter.com"
 	DateLayout         = "2006/01/02T15:00Z"

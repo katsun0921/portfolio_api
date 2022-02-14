@@ -4,7 +4,6 @@ import (
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
-  "github.com/katsun0921/portfolio_api/src/domain/articles"
   "regexp"
   "sort"
   "strings"
@@ -31,46 +30,51 @@ func (api *apisService) GetApiAll() ([]*apis.Api, rest_errors.RestErr) {
   if errTwitter != nil {
     return nil, errTwitter
   }
-  zenns, errZenns := api.GetRss(constants.ZENN)
-  if errZenns != nil {
-    return nil, errZenns
+  zenn, errZenn := api.GetRss(constants.ZENN)
+  if errZenn != nil {
+    return nil, errZenn
   }
   res = append(res, tweets...)
-  res = append(res, zenns...)
+  res = append(res, zenn...)
   sort.SliceStable(res, func(i, j int) bool { return res[i].DateUnix > res[j].DateUnix })
   return res, nil
 }
 
 func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
   api := &apis.Api{}
-  article := &articles.Article{}
+  //article := &articles.Article{}
   var res []*apis.Api
-  rss, err := api.GetFeedApi(service)
+  feed, err := api.GetFeedApi(service)
   if err != nil {
     return nil, err
   }
 
+  /* TODO: Comment out until post is made.
   articleId, articleErr := article.FindByLatestArticleId(service)
   if articleErr != nil {
     return nil, articleErr
   }
+  */
 
-  feeds := rss.Items
-  for _, feed := range feeds {
+  items := feed.Items
 
-    if feed.GUID == articleId {
+  for _, item := range items {
+
+    /* TODO: Comment out until post is made.
+    if item.GUID == articleId {
       break
     }
+    */
     key := &apis.Api{}
-    itemPlainText := feed.Description
+    itemPlainText := item.Description
     itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
     itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
     t, _ := time.Parse(constants.TimeLayoutRFC1123, feed.Published)
     feedDate := t.Format(constants.DateLayout)
 
-    key.Id = feed.GUID
-    key.Text = feed.Title + "\n" + itemPlainText
-    key.Link = feed.Link
+    key.Id = item.GUID
+    key.Text = item.Title + "\n" + itemPlainText
+    key.Link = item.Link
     key.DateCreated = feedDate
     key.DateUnix = int(t.Unix())
     key.Service = service

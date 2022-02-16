@@ -1,8 +1,8 @@
 package articles
 
 import (
-  "github.com/katsun0921/go_utils/rest_errors"
-  "strings"
+	"github.com/katsun0921/go_utils/rest_errors"
+	"strings"
 )
 
 type Article struct {
@@ -12,7 +12,7 @@ type Article struct {
 	Service     string `json:"service"`
 	ArticleId   string `json:"article_id"`
 	DateCreated string `json:"date_created"`
-  CreatedAt string `json:"created_at"`
+	CreatedAt   string `json:"created_at"`
 }
 
 type Articles []Article

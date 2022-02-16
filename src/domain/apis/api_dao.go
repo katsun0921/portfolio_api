@@ -6,10 +6,11 @@ import (
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	"github.com/joho/godotenv"
-	"github.com/katsun0921/go_utils/logger"
+  "github.com/katsun0921/go_utils/logger"
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/src/constants"
 	"github.com/katsun0921/portfolio_api/src/domain/articles"
+  "github.com/katsun0921/portfolio_api/src/lib/google_sheets_api"
 	"github.com/mmcdole/gofeed"
 	"os"
 	"strconv"
@@ -99,4 +100,11 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 		return nil, rest_errors.NewInternalServerError(fmt.Sprintf("twitter server error %d", httpResponse.StatusCode), err)
 	}
 	return tweets, nil
+}
+
+func (skill *Skill) GetGoogleSheetsApi() ([][]interface{}, rest_errors.RestErr) {
+  api := google_sheets_api.Main()
+
+  fmt.Println(api)
+  return api, nil
 }

@@ -11,7 +11,7 @@ import (
   "net/http"
 )
 
-func Get(c *gin.Context) {
+func GetBlogs(c *gin.Context) {
   var resApi []*apis.Api
   var err rest_errors.RestErr
 
@@ -34,6 +34,22 @@ func Get(c *gin.Context) {
   } else {
     resApi, err = services.ApisService.GetApiAll()
   }
+
+  if err != nil {
+    logger.Error("error when trying to api request", err)
+    restErr := rest_errors.NewBadRequestError("invalid json error for apis", errors.New("json error"))
+    if restErr != nil {
+      return
+    }
+  }
+  c.JSON(http.StatusOK, resApi)
+}
+
+func GetSkills(c *gin.Context) {
+  var resApi []*apis.Skill
+  var err rest_errors.RestErr
+
+  resApi, err = services.ApisService.GetSkills()
 
   if err != nil {
     logger.Error("error when trying to api request", err)

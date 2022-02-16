@@ -1,6 +1,7 @@
 package services
 
 import (
+  "fmt"
   "github.com/katsun0921/go_utils/rest_errors"
   "github.com/katsun0921/portfolio_api/src/constants"
   "github.com/katsun0921/portfolio_api/src/domain/apis"
@@ -18,6 +19,7 @@ type apisServiceInterface interface {
   GetApiAll() ([]*apis.Api, rest_errors.RestErr)
   GetRss(service string) ([]*apis.Api, rest_errors.RestErr)
   GetTwitter() ([]*apis.Api, rest_errors.RestErr)
+  GetSkills() ([]*apis.Skill, rest_errors.RestErr)
 }
 
 type apisService struct {
@@ -119,6 +121,19 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
 
     res = append(res, key)
   }
+
+  return res, nil
+}
+
+func (*apisService) GetSkills() ([]*apis.Skill, rest_errors.RestErr) {
+  skill := &apis.Skill{}
+  var res []*apis.Skill
+  skills, err := skill.GetGoogleSheetsApi()
+  if err != nil {
+    return nil, err
+  }
+
+  fmt.Println(skills)
 
   return res, nil
 }

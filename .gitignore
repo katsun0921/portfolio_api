@@ -21,3 +21,6 @@
 
 # Build file
 main
+
+# Authorization credentials for A Google Cloud Platform project
+secret.json

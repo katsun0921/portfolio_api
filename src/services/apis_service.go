@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/src/constants"
 	"github.com/katsun0921/portfolio_api/src/domain/apis"
@@ -72,7 +71,7 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
 		itemPlainText := item.Description
 		itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
 		itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-		t, _ := time.Parse(constants.TimeLayoutRFC1123, feed.Published)
+		t, _ := time.Parse(time.RFC1123, feed.Published)
 		feedDate := t.Format(constants.DateLayout)
 
 		key.Id = item.GUID
@@ -111,7 +110,7 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
 		tweetStatus := tweet.IDStr
 		tweetLink := constants.TwitterDomain + "/" + tweetScreenName + "/status/" + tweetStatus
 
-		t, _ := time.Parse(constants.TimeLayoutUnixDate, tweet.CreatedAt)
+		t, _ := time.Parse(time.UnixDate, tweet.CreatedAt)
 		tweetDate := t.Format(constants.DateLayout)
 		key.Id = tweet.IDStr
 		key.Text = tweetPlainText
@@ -244,11 +243,10 @@ func (*apisService) GetWorkExpress() ([]apis.WorkExpress, rest_errors.RestErr) {
 
 	sort.SliceStable(res, func(i, j int) bool { return setUnixParse(res[i].EndDate)  > setUnixParse(res[j].EndDate) })
 
-	fmt.Println(res)
 	return res, nil
 }
 
 func setUnixParse(date string) int {
-	t, _ := time.Parse("2006/01/02", date)
+	t, _ := time.Parse(constants.SheetDateLayout, date)
 	return int(t.Unix())
 }

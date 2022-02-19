@@ -49,7 +49,7 @@ func GetSkills(c *gin.Context) {
 	var resApi []apis.Skill
 	var err rest_errors.RestErr
 
-	resApi, err = services.ApisService.GetSkills("'Skill'!A2:D18")
+	resApi, err = services.ApisService.GetSkills()
 
 	if err != nil {
 		logger.Error("error when trying to api request", err)

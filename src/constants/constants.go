@@ -14,4 +14,6 @@ const (
 	Frontend           = "frontend"
 	Backend            = "backend"
 	Infra              = "infra"
+	SheetRangeSkill    = "Skill!A2:D18"
+	SheetRangeJobType  = "jobType!B2:C4"
 )

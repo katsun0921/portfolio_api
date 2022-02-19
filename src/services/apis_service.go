@@ -18,7 +18,7 @@ type apisServiceInterface interface {
 	GetApiAll() ([]*apis.Api, rest_errors.RestErr)
 	GetRss(service string) ([]*apis.Api, rest_errors.RestErr)
 	GetTwitter() ([]*apis.Api, rest_errors.RestErr)
-	GetSkills(sheetNameRange string) ([]apis.Skill, rest_errors.RestErr)
+	GetSkills() ([]apis.Skill, rest_errors.RestErr)
 }
 
 type apisService struct {
@@ -124,12 +124,17 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
 	return res, nil
 }
 
-func (*apisService) GetSkills(sheetNameRange string) ([]apis.Skill, rest_errors.RestErr) {
+func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 	skill := &apis.Skill{}
 	var res []apis.Skill
-	skills, err := skill.GetGoogleSheetsApi(sheetNameRange)
-	if err != nil {
-		return nil, err
+	skills, skillsErr := skill.GetGoogleSheetsApi(constants.SheetRangeSkill)
+	if skillsErr != nil {
+		return nil, skillsErr
+	}
+
+	jobNames, jobNamesErr := skill.GetGoogleSheetsApi(constants.SheetRangeJobType)
+	if jobNamesErr != nil {
+		return nil, skillsErr
 	}
 
 	for _, skill := range skills {
@@ -164,10 +169,13 @@ func (*apisService) GetSkills(sheetNameRange string) ([]apis.Skill, rest_errors.
 			switch job.Job {
 			case constants.Frontend:
 				job.Id = "1"
+				job.Job = setJobName(constants.Frontend, jobNames)
 			case constants.Backend:
 				job.Id = "2"
+				job.Job = setJobName(constants.Backend, jobNames)
 			case constants.Infra:
 				job.Id = "3"
+				job.Job = setJobName(constants.Infra, jobNames)
 			}
 
 			job.Skills = arrLang
@@ -178,4 +186,15 @@ func (*apisService) GetSkills(sheetNameRange string) ([]apis.Skill, rest_errors.
 	}
 
 	return res, nil
+}
+
+func setJobName(jobType string, jobNames [][]interface{}) string {
+	for _, jobName := range jobNames {
+		if jobType == jobName[0] {
+			if jobName, ok := jobName[1].(string); ok {
+				return jobName
+			}
+		}
+	}
+	return jobType
 }

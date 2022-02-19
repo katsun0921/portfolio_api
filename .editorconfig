@@ -15,3 +15,7 @@ tab_width = 2
 # マークダウンファイル
 [*.md]
 trim_trailing_whitespace = false
+
+# Golang
+[*.go]
+indent_style = tab

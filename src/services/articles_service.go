@@ -12,13 +12,12 @@ var (
 )
 
 type TResArticle struct {
-  Id          int    `json:"id"`
-  Text        string `json:"text"`
-  Link        string `json:"link"`
-  Service     string `json:"service"`
-  DateCreated string `json:"date_created"`
+	Id          int    `json:"id"`
+	Text        string `json:"text"`
+	Link        string `json:"link"`
+	Service     string `json:"service"`
+	DateCreated string `json:"date_created"`
 }
-
 
 type articlesService struct {
 }
@@ -42,7 +41,7 @@ func (s *articlesService) GetArticleAll() ([]TResArticle, rest_errors.RestErr) {
 		res.Id = i
 		res.Text = article.Text
 		res.Link = article.Link
-    res.Service = article.Service
+		res.Service = article.Service
 		res.DateCreated = article.DateCreated
 		articleAll = append(articleAll, res)
 	}

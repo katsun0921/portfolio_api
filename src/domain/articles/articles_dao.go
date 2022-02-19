@@ -15,7 +15,7 @@ const (
 	queryFindByLatestArticleId = "SELECT id, service, article_id, data_created FROM blog_db.articles WHERE data_created = (SELECT MAX(data_created) FROM blog_db.articles WHERE blog_db.articles.service=?);"
 )
 
-func (article *Article) Get() ( []Article, rest_errors.RestErr) {
+func (article *Article) Get() ([]Article, rest_errors.RestErr) {
 	stmt, err := blog_db.Client.Prepare(queryGetArticle)
 	if err != nil {
 		logger.Error("error when trying to prepare get article statement", err)
@@ -23,22 +23,22 @@ func (article *Article) Get() ( []Article, rest_errors.RestErr) {
 	}
 	defer stmt.Close()
 
-  rows, err := stmt.Query()
-  if err != nil {
-    logger.Error("error when trying to get blog_db", err)
-    return nil, rest_errors.NewInternalServerError("error when trying to get", errors.New("database error"))
-  }
-  defer rows.Close()
+	rows, err := stmt.Query()
+	if err != nil {
+		logger.Error("error when trying to get blog_db", err)
+		return nil, rest_errors.NewInternalServerError("error when trying to get", errors.New("database error"))
+	}
+	defer rows.Close()
 
-  results := make([]Article, 0)
-  for rows.Next() {
-    var article Article
-    if err := rows.Scan(&article.Text, &article.Link, &article.Service,  &article.DateCreated); err != nil {
-      logger.Error("error when scan queryGetArticle to article row into blog_db", err)
-      return nil, rest_errors.NewInternalServerError("error when trying to get", errors.New("database error"))
-    }
-    results = append(results, article)
-  }
+	results := make([]Article, 0)
+	for rows.Next() {
+		var article Article
+		if err := rows.Scan(&article.Text, &article.Link, &article.Service, &article.DateCreated); err != nil {
+			logger.Error("error when scan queryGetArticle to article row into blog_db", err)
+			return nil, rest_errors.NewInternalServerError("error when trying to get", errors.New("database error"))
+		}
+		results = append(results, article)
+	}
 
 	return results, nil
 }
@@ -99,7 +99,7 @@ func (article *Article) FindByService(service string) ([]Article, rest_errors.Re
 }
 
 func (article *Article) FindByLatestArticleId(service string) (string, rest_errors.RestErr) {
-  articleId := ""
+	articleId := ""
 
 	stmt, err := blog_db.Client.Prepare(queryFindByLatestArticleId)
 	if err != nil {
@@ -126,8 +126,8 @@ func (article *Article) FindByLatestArticleId(service string) (string, rest_erro
 	}
 
 	if len(results) > 0 {
-	  articleId = results[0].ArticleId
-  }
+		articleId = results[0].ArticleId
+	}
 
 	return articleId, nil
 }

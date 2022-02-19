@@ -29,5 +29,5 @@ type WorkExpress struct {
 	StartDate   string `json:"start_date"`
 	EndDate     string `json:"end_date"`
 	Description string `json:"description"`
-	Skills      string `json:"skills"`
+	Skills      []string `json:"skills"`
 }

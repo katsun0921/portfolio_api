@@ -6,6 +6,7 @@ import (
 	"github.com/katsun0921/portfolio_api/src/domain/apis"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -234,14 +235,17 @@ func (*apisService) GetWorkExpress() ([]apis.WorkExpress, rest_errors.RestErr) {
 			express.Description = description
 		}
 
+		if skills, ok := work[6].(string); ok {
+			express.Skills = strings.Split(skills, ",")
+		}
 		res = append(res, express)
 	}
 
-	for _, _res := range res {
-		setUnixParse(_res.EndDate)
-	}
+	sort.SliceStable(res, func(i, j int) bool { return setUnixParse(res[i].EndDate) > setUnixParse(res[j].EndDate) })
 
-	sort.SliceStable(res, func(i, j int) bool { return setUnixParse(res[i].EndDate)  > setUnixParse(res[j].EndDate) })
+	for i := 0; i < len(res); i++ {
+		res[i].Id = strconv.Itoa(i + 1)
+	}
 
 	return res, nil
 }

@@ -20,3 +20,14 @@ type Language struct {
 	Name  string `json:"name"`
 	Level string `json:"level"`
 }
+
+type WorkExpress struct {
+	Id          string `json:"id"`
+	Company     string `json:"company"`
+	Project     string `json:"project"`
+	JobType     string `json:"job_type"`
+	StartDate   string `json:"start_date"`
+	EndDate     string `json:"end_date"`
+	Description string `json:"description"`
+	Skills      string `json:"skills"`
+}

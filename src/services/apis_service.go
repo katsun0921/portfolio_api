@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/src/constants"
 	"github.com/katsun0921/portfolio_api/src/domain/apis"
@@ -19,6 +20,7 @@ type apisServiceInterface interface {
 	GetRss(service string) ([]*apis.Api, rest_errors.RestErr)
 	GetTwitter() ([]*apis.Api, rest_errors.RestErr)
 	GetSkills() ([]apis.Skill, rest_errors.RestErr)
+	GetWorkExpress() ([]apis.WorkExpress, rest_errors.RestErr)
 }
 
 type apisService struct {
@@ -125,14 +127,14 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
 }
 
 func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
-	skill := &apis.Skill{}
+	api := &apis.Api{}
 	var res []apis.Skill
-	skills, skillsErr := skill.GetGoogleSheetsApi(constants.SheetRangeSkill)
+	skills, skillsErr := api.GetGoogleSheetsApi(constants.SheetRangeSkill)
 	if skillsErr != nil {
 		return nil, skillsErr
 	}
 
-	jobNames, jobNamesErr := skill.GetGoogleSheetsApi(constants.SheetRangeJobType)
+	jobNames, jobNamesErr := api.GetGoogleSheetsApi(constants.SheetRangeJobType)
 	if jobNamesErr != nil {
 		return nil, skillsErr
 	}
@@ -169,13 +171,13 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 			switch job.Job {
 			case constants.Frontend:
 				job.Id = "1"
-				job.Job = setJobName(constants.Frontend, jobNames)
+				job.Job = getJobName(constants.Frontend, jobNames)
 			case constants.Backend:
 				job.Id = "2"
-				job.Job = setJobName(constants.Backend, jobNames)
+				job.Job = getJobName(constants.Backend, jobNames)
 			case constants.Infra:
 				job.Id = "3"
-				job.Job = setJobName(constants.Infra, jobNames)
+				job.Job = getJobName(constants.Infra, jobNames)
 			}
 
 			job.Skills = arrLang
@@ -188,7 +190,7 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 	return res, nil
 }
 
-func setJobName(jobType string, jobNames [][]interface{}) string {
+func getJobName(jobType string, jobNames [][]interface{}) string {
 	for _, jobName := range jobNames {
 		if jobType == jobName[0] {
 			if jobName, ok := jobName[1].(string); ok {
@@ -197,4 +199,56 @@ func setJobName(jobType string, jobNames [][]interface{}) string {
 		}
 	}
 	return jobType
+}
+
+func (*apisService) GetWorkExpress() ([]apis.WorkExpress, rest_errors.RestErr) {
+	api := &apis.Api{}
+	var res []apis.WorkExpress
+	workExpress, workExpressErr := api.GetGoogleSheetsApi(constants.SheetRangeWorkExpress)
+	if workExpressErr != nil {
+		return nil, workExpressErr
+	}
+
+	for _, work := range workExpress {
+		express := apis.WorkExpress{}
+		if company, ok := work[0].(string); ok {
+			express.Company = company
+		}
+
+		if project, ok := work[1].(string); ok {
+			express.Project = project
+		}
+
+		if jobType, ok := work[2].(string); ok {
+			express.JobType = jobType
+		}
+
+		if startDate, ok := work[3].(string); ok {
+			express.StartDate = startDate
+		}
+
+		if endDate, ok := work[4].(string); ok {
+			express.EndDate = endDate
+		}
+
+		if description, ok := work[5].(string); ok {
+			express.Description = description
+		}
+
+		res = append(res, express)
+	}
+
+	for _, _res := range res {
+		setUnixParse(_res.EndDate)
+	}
+
+	sort.SliceStable(res, func(i, j int) bool { return setUnixParse(res[i].EndDate)  > setUnixParse(res[j].EndDate) })
+
+	fmt.Println(res)
+	return res, nil
+}
+
+func setUnixParse(date string) int {
+	t, _ := time.Parse("2006/01/02", date)
+	return int(t.Unix())
 }

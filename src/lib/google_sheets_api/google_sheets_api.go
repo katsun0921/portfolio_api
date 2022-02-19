@@ -43,13 +43,13 @@ func (s *SheetClient) Get(range_ string) ([][]interface{}, error) {
 	return resp.Values, nil
 }
 
-func Main() [][]interface{} {
+func Main(sheetNameRange string) [][]interface{} {
 	client, err := NewSheetClient(os.Getenv("SPREAD_SHEET_ID"))
 	if err != nil {
 		panic(err)
 		return nil
 	}
-	res, err := client.Get("'Skill'!A2:D18")
+	res, err := client.Get(sheetNameRange)
 
 	if err != nil {
 		panic(err)

@@ -46,10 +46,10 @@ func GetBlogs(c *gin.Context) {
 }
 
 func GetSkills(c *gin.Context) {
-	var resApi []*apis.Skill
+	var resApi []apis.Skill
 	var err rest_errors.RestErr
 
-	resApi, err = services.ApisService.GetSkills()
+	resApi, err = services.ApisService.GetSkills("'Skill'!A2:D18")
 
 	if err != nil {
 		logger.Error("error when trying to api request", err)

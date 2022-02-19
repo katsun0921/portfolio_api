@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/src/constants"
 	"github.com/katsun0921/portfolio_api/src/domain/apis"
@@ -19,7 +18,7 @@ type apisServiceInterface interface {
 	GetApiAll() ([]*apis.Api, rest_errors.RestErr)
 	GetRss(service string) ([]*apis.Api, rest_errors.RestErr)
 	GetTwitter() ([]*apis.Api, rest_errors.RestErr)
-	GetSkills() ([]*apis.Skill, rest_errors.RestErr)
+	GetSkills(sheetNameRange string) ([]apis.Skill, rest_errors.RestErr)
 }
 
 type apisService struct {
@@ -125,15 +124,58 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
 	return res, nil
 }
 
-func (*apisService) GetSkills() ([]*apis.Skill, rest_errors.RestErr) {
+func (*apisService) GetSkills(sheetNameRange string) ([]apis.Skill, rest_errors.RestErr) {
 	skill := &apis.Skill{}
-	var res []*apis.Skill
-	skills, err := skill.GetGoogleSheetsApi()
+	var res []apis.Skill
+	skills, err := skill.GetGoogleSheetsApi(sheetNameRange)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println(skills)
+	for _, skill := range skills {
+		job := apis.Skill{}
+		lang := apis.Language{}
+		if name, ok := skill[2].(string); ok {
+			lang.Name = name
+		}
+
+		if level, ok := skill[3].(string); ok {
+			lang.Level = level
+		}
+
+		if jobType, ok := skill[1].(string); ok {
+			job.Job = jobType
+		}
+
+		var arrLang []apis.Language
+		var arrJobs []apis.Skill
+		arrLang = append(arrLang, lang)
+
+		isJobType := false
+		for i := 0; i < len(res); i++ {
+			if res[i].Job == job.Job {
+				res[i].Skills = append(res[i].Skills, arrLang...)
+				isJobType = true
+				break
+			}
+		}
+
+		if !isJobType {
+			switch job.Job {
+			case constants.Frontend:
+				job.Id = "1"
+			case constants.Backend:
+				job.Id = "2"
+			case constants.Infra:
+				job.Id = "3"
+			}
+
+			job.Skills = arrLang
+			arrJobs = append(arrJobs, job)
+			res = append(res, arrJobs...)
+			continue
+		}
+	}
 
 	return res, nil
 }

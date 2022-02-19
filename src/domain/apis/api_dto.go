@@ -11,10 +11,12 @@ type Api struct {
 }
 
 type Skill struct {
-	Id          string `json:"id"`
-	Text        string `json:"text"`
-	Link        string `json:"link"`
-	Service     string `json:"service"`
-	DateCreated string `json:"date_created"`
-	DateUnix    int    `json:"date_unix"`
+	Id     string     `json:"id"`
+	Job    string     `json:"job"`
+	Skills []Language `json:"skills"`
+}
+
+type Language struct {
+	Name  string `json:"name"`
+	Level string `json:"level"`
 }

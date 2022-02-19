@@ -11,4 +11,7 @@ const (
 	ArticlesMaxCount   = 100
 	TimeLayoutUnixDate = "Mon Jan 2 15:04:05 MST 2006"
 	TimeLayoutRFC1123  = "Mon, 02 Jan 2006 15:04:05 MST"
+	Frontend           = "frontend"
+	Backend            = "backend"
+	Infra              = "infra"
 )

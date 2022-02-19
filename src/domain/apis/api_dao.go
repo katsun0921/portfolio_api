@@ -102,9 +102,9 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 	return tweets, nil
 }
 
-func (skill *Skill) GetGoogleSheetsApi() ([][]interface{}, rest_errors.RestErr) {
-	api := google_sheets_api.Main()
+func (skill *Skill) GetGoogleSheetsApi(sheetNameRange string) ([][]interface{}, rest_errors.RestErr) {
 
-	fmt.Println(api)
+	api := google_sheets_api.Main(sheetNameRange)
+
 	return api, nil
 }

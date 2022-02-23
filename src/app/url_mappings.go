@@ -7,7 +7,7 @@ import (
 
 func mapUrls() {
 	router.GET("/ping", ping.Ping)
-	router.GET("/apis", apis.GetBlogs)
+	router.GET("/blogs", apis.GetBlogs)
 	router.GET("/skills", apis.GetSkills)
 	router.GET("/workExpress", apis.GetWorkExpress)
 	//:TODO Comment out until post is made.

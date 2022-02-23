@@ -9,7 +9,6 @@ import (
 	"github.com/katsun0921/go_utils/logger"
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/src/constants"
-	"github.com/katsun0921/portfolio_api/src/domain/articles"
 	"github.com/katsun0921/portfolio_api/src/lib/google_sheets_api"
 	"github.com/mmcdole/gofeed"
 	"os"
@@ -68,6 +67,7 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 		return nil, rest_errors.NewInternalServerError("twitter server error to user id", errUserId)
 	}
 
+	/*
 	result := &articles.Article{}
 
 	articleId, dbErr := result.FindByLatestArticleId(constants.TWITTER)
@@ -82,11 +82,12 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 	}
 
 	articleIdInt64, _ := strconv.ParseInt(articleId, 10, 64)
+  */
 
 	p := TUserTimelineParams{
 		UserID:  toIntTwitterUserId,
 		Count:   constants.ArticlesMaxCount,
-		SinceID: articleIdInt64,
+		//SinceID: articleIdInt64,
 	}
 
 	tweets, httpResponse, err := client.Timelines.UserTimeline(&twitter.UserTimelineParams{

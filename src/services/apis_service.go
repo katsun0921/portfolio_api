@@ -134,16 +134,16 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 		return nil, skillsErr
 	}
 
-	jobNames, jobNamesErr := api.GetGoogleSheetsApi(constants.SheetRangeJobType)
-	if jobNamesErr != nil {
+	jobTypes, jobTypesErr := api.GetGoogleSheetsApi(constants.SheetRangeJobType)
+	if jobTypesErr != nil {
 		return nil, skillsErr
 	}
 
 	for _, skill := range skills {
 		job := apis.Skill{}
-		lang := apis.Language{}
-		if name, ok := skill[2].(string); ok {
-			lang.Name = name
+		lang := apis.Programming{}
+		if language, ok := skill[2].(string); ok {
+			lang.Language = language
 		}
 
 		if level, ok := skill[3].(string); ok {
@@ -154,7 +154,7 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 			job.Job = jobType
 		}
 
-		var arrLang []apis.Language
+		var arrLang []apis.Programming
 		var arrJobs []apis.Skill
 		arrLang = append(arrLang, lang)
 
@@ -168,18 +168,6 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 		}
 
 		if !isJobType {
-			switch job.Job {
-			case constants.Frontend:
-				job.Id = "1"
-				job.Job = getJobName(constants.Frontend, jobNames)
-			case constants.Backend:
-				job.Id = "2"
-				job.Job = getJobName(constants.Backend, jobNames)
-			case constants.Infra:
-				job.Id = "3"
-				job.Job = getJobName(constants.Infra, jobNames)
-			}
-
 			job.Skills = arrLang
 			arrJobs = append(arrJobs, job)
 			res = append(res, arrJobs...)
@@ -187,19 +175,46 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 		}
 	}
 
+	// Set id and JobName
+	for i := 0; i < len(res); i++ {
+		switch res[i].Job {
+		case constants.Frontend:
+			res[i].Id = "1"
+			res[i].Job = getJobName(constants.Frontend, jobTypes)
+		case constants.Backend:
+			res[i].Id = "2"
+			res[i].Job = getJobName(constants.Backend, jobTypes)
+		case constants.Infra:
+			res[i].Id = "3"
+			res[i].Job = getJobName(constants.Infra, jobTypes)
+		}
+	}
+
 	return res, nil
 }
 
-func getJobName(jobType string, jobNames [][]interface{}) string {
-	for _, jobName := range jobNames {
-		if jobType == jobName[0] {
-			if jobName, ok := jobName[1].(string); ok {
-				return jobName
+func getJobName(resType string, jobTypes [][]interface{}) string {
+	for _, jobType := range jobTypes {
+		if resType == jobType[0] {
+			if name, ok := jobType[1].(string); ok {
+				return name
 			}
 		}
 	}
-	return jobType
+	return resType
 }
+
+func getJobId(resType string, jobTypes [][]interface{}) string {
+	for _, jobType := range jobTypes {
+		if resType == jobType[0] {
+			if jobId, ok := jobType[0].(string); ok {
+				return jobId
+			}
+		}
+	}
+	return ""
+}
+
 
 func (*apisService) GetWorkexpress() ([]apis.Workexpress, rest_errors.RestErr) {
 	api := &apis.Api{}

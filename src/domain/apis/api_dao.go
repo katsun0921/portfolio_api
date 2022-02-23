@@ -68,6 +68,7 @@ func (api *Api) GetTwitterApi() ([]twitter.Tweet, rest_errors.RestErr) {
 	}
 
 	/*
+	TODO: Get Article data from DATABASE
 	result := &articles.Article{}
 
 	articleId, dbErr := result.FindByLatestArticleId(constants.TWITTER)

@@ -2,11 +2,11 @@ package blog_db
 
 import (
 	"database/sql"
-	"fmt"
+	//"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	"log"
-	"os"
+	//"os"
 )
 
 var (
@@ -18,11 +18,11 @@ func init() {
 	if errEnv != nil {
 		log.Fatal("Error loading .env file")
 	}
+    /*
 	username := os.Getenv("MYSQL_USERNAME")
 	password := os.Getenv("MYSQL_PASSWORD")
 	host := os.Getenv("MYSQL_HOST")
 	schema := os.Getenv("MYSQL_DATANAME")
-
 	dataSourceName := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4",
 		username, password, host, schema,
 	)
@@ -36,4 +36,5 @@ func init() {
 		panic(err)
 	}
 	log.Println("database successfully configured")
+*/
 }

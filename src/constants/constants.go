@@ -14,6 +14,6 @@ const (
 	Infra                 = "infra"
 	SheetRangeSkill       = "Skill!A2:D18"
 	SheetRangeJobType     = "jobType!B2:C4"
-	SheetRangeWorkExpress = "workExpress!B2:H4"
+	SheetRangeWorkexpress = "workExpress!B2:H4"
 	SheetDateLayout       = "2006/01/02"
 )

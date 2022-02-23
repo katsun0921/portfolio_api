@@ -21,7 +21,7 @@ type Language struct {
 	Level string `json:"level"`
 }
 
-type WorkExpress struct {
+type Workexpress struct {
 	Id          string   `json:"id"`
 	Company     string   `json:"company"`
 	Project     string   `json:"project"`

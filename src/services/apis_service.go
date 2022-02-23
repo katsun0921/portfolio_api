@@ -20,7 +20,7 @@ type apisServiceInterface interface {
 	GetRss(service string) ([]*apis.Api, rest_errors.RestErr)
 	GetTwitter() ([]*apis.Api, rest_errors.RestErr)
 	GetSkills() ([]apis.Skill, rest_errors.RestErr)
-	GetWorkExpress() ([]apis.WorkExpress, rest_errors.RestErr)
+	GetWorkexpress() ([]apis.Workexpress, rest_errors.RestErr)
 }
 
 type apisService struct {
@@ -201,16 +201,16 @@ func getJobName(jobType string, jobNames [][]interface{}) string {
 	return jobType
 }
 
-func (*apisService) GetWorkExpress() ([]apis.WorkExpress, rest_errors.RestErr) {
+func (*apisService) GetWorkexpress() ([]apis.Workexpress, rest_errors.RestErr) {
 	api := &apis.Api{}
-	var res []apis.WorkExpress
-	workExpress, workExpressErr := api.GetGoogleSheetsApi(constants.SheetRangeWorkExpress)
-	if workExpressErr != nil {
-		return nil, workExpressErr
+	var res []apis.Workexpress
+	Workexpress, WorkexpressErr := api.GetGoogleSheetsApi(constants.SheetRangeWorkexpress)
+	if WorkexpressErr != nil {
+		return nil, WorkexpressErr
 	}
 
-	for _, work := range workExpress {
-		express := apis.WorkExpress{}
+	for _, work := range Workexpress {
+		express := apis.Workexpress{}
 		if company, ok := work[0].(string); ok {
 			express.Company = company
 		}

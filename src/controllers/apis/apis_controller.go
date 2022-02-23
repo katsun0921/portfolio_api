@@ -61,11 +61,11 @@ func GetSkills(c *gin.Context) {
 	c.JSON(http.StatusOK, resApi)
 }
 
-func GetWorkExpress(c *gin.Context) {
-	var resApi []apis.WorkExpress
+func GetWorkexpress(c *gin.Context) {
+	var resApi []apis.Workexpress
 	var err rest_errors.RestErr
 
-	resApi, err = services.ApisService.GetWorkExpress()
+	resApi, err = services.ApisService.GetWorkexpress()
 
 	if err != nil {
 		logger.Error("error when trying to api request", err)

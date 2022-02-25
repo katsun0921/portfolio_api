@@ -18,9 +18,10 @@ type Skill struct {
 }
 
 type Programming struct {
-	Id       string `json:"language_id"`
-	Language string `json:"language"`
-	Level    string `json:"level"`
+	Id        string `json:"language_id"`
+	Language  string `json:"language"`
+	Level     string `json:"level"`
+	ColorCode string `json:"color_code"`
 }
 
 type Workexpress struct {

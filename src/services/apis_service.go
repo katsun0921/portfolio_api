@@ -4,6 +4,7 @@ import (
 	"github.com/katsun0921/go_utils/rest_errors"
 	"github.com/katsun0921/portfolio_api/src/constants"
 	"github.com/katsun0921/portfolio_api/src/domain/apis"
+	"github.com/katsun0921/portfolio_api/src/utils/date_utils"
 	"regexp"
 	"sort"
 	"strconv"
@@ -117,7 +118,7 @@ func (*apisService) GetTwitter() ([]*apis.Api, rest_errors.RestErr) {
 		key.Text = tweetPlainText
 		key.Link = tweetLink
 		key.DateCreated = tweetDate
-		key.DateUnix = int(t.Unix())
+		key.DateUnix = date_utils.SetUnixParse(time.UnixDate, tweet.CreatedAt)
 		key.Service = constants.TWITTER
 
 		res = append(res, key)
@@ -142,6 +143,11 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 	for _, skill := range skills {
 		job := apis.Skill{}
 		lang := apis.Programming{}
+
+		if jobId, ok := skill[0].(string); ok {
+			lang.Id = jobId
+		}
+
 		if language, ok := skill[2].(string); ok {
 			lang.Language = language
 		}
@@ -256,16 +262,11 @@ func (*apisService) GetWorkexpress() ([]apis.Workexpress, rest_errors.RestErr) {
 		res = append(res, express)
 	}
 
-	sort.SliceStable(res, func(i, j int) bool { return setUnixParse(res[i].EndDate) > setUnixParse(res[j].EndDate) })
+	sort.SliceStable(res, func(i, j int) bool { return date_utils.SetUnixParse(constants.SheetDateLayout, res[i].EndDate) > date_utils.SetUnixParse(constants.SheetDateLayout, res[j].EndDate) })
 
 	for i := 0; i < len(res); i++ {
 		res[i].Id = strconv.Itoa(i + 1)
 	}
 
 	return res, nil
-}
-
-func setUnixParse(date string) int {
-	t, _ := time.Parse(constants.SheetDateLayout, date)
-	return int(t.Unix())
 }

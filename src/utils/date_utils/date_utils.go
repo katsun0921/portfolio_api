@@ -16,3 +16,8 @@ func GetNowString() string {
 func GetNowDBFormat() string {
 	return GetNow().Format(constants.DBLayout)
 }
+
+func SetUnixParse(layout string, value string) int {
+	t, _ := time.Parse(layout, value)
+	return int(t.Unix())
+}

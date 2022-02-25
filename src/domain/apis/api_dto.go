@@ -11,14 +11,15 @@ type Api struct {
 }
 
 type Skill struct {
-	Id     string     `json:"id"`
-	Job    string     `json:"job"`
-	Skills []Programming `json:"skills"`
+	Id          string        `json:"id"`
+	Name        string        `json:"name"`
+	NameJp      string        `json:"name_jp"`
+	Programming []Programming `json:"programming"`
 }
 
 type Programming struct {
-	Language  string `json:"language"`
-	Level string `json:"level"`
+	Language string `json:"language"`
+	Level    string `json:"level"`
 }
 
 type Workexpress struct {

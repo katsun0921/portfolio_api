@@ -151,7 +151,8 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 		}
 
 		if jobType, ok := skill[1].(string); ok {
-			job.Job = jobType
+			job.Name = jobType
+			job.NameJp = jobType
 		}
 
 		var arrLang []apis.Programming
@@ -160,43 +161,43 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 
 		isJobType := false
 		for i := 0; i < len(res); i++ {
-			if res[i].Job == job.Job {
-				res[i].Skills = append(res[i].Skills, arrLang...)
+			if res[i].Name == job.Name {
+				res[i].Programming = append(res[i].Programming, arrLang...)
 				isJobType = true
 				break
 			}
 		}
 
 		if !isJobType {
-			job.Skills = arrLang
+			job.Programming = arrLang
 			arrJobs = append(arrJobs, job)
 			res = append(res, arrJobs...)
 			continue
 		}
 	}
 
-	// Set id and JobName
+	// Set id and NameJp
 	for i := 0; i < len(res); i++ {
-		switch res[i].Job {
+		switch res[i].NameJp {
 		case constants.Frontend:
-			res[i].Id = "1"
-			res[i].Job = getJobName(constants.Frontend, jobTypes)
+			res[i].Id = getSkillId(constants.Frontend, jobTypes)
+			res[i].NameJp = getSkillNameJp(constants.Frontend, jobTypes)
 		case constants.Backend:
-			res[i].Id = "2"
-			res[i].Job = getJobName(constants.Backend, jobTypes)
+			res[i].Id = getSkillId(constants.Backend, jobTypes)
+			res[i].NameJp = getSkillNameJp(constants.Backend, jobTypes)
 		case constants.Infra:
-			res[i].Id = "3"
-			res[i].Job = getJobName(constants.Infra, jobTypes)
+			res[i].Id = getSkillId(constants.Infra, jobTypes)
+			res[i].NameJp = getSkillNameJp(constants.Infra, jobTypes)
 		}
 	}
 
 	return res, nil
 }
 
-func getJobName(resType string, jobTypes [][]interface{}) string {
+func getSkillNameJp(resType string, jobTypes [][]interface{}) string {
 	for _, jobType := range jobTypes {
-		if resType == jobType[0] {
-			if name, ok := jobType[1].(string); ok {
+		if resType == jobType[1] {
+			if name, ok := jobType[2].(string); ok {
 				return name
 			}
 		}
@@ -204,9 +205,9 @@ func getJobName(resType string, jobTypes [][]interface{}) string {
 	return resType
 }
 
-func getJobId(resType string, jobTypes [][]interface{}) string {
+func getSkillId(resType string, jobTypes [][]interface{}) string {
 	for _, jobType := range jobTypes {
-		if resType == jobType[0] {
+		if resType == jobType[1] {
 			if jobId, ok := jobType[0].(string); ok {
 				return jobId
 			}
@@ -214,7 +215,6 @@ func getJobId(resType string, jobTypes [][]interface{}) string {
 	}
 	return ""
 }
-
 
 func (*apisService) GetWorkexpress() ([]apis.Workexpress, rest_errors.RestErr) {
 	api := &apis.Api{}

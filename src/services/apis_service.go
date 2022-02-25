@@ -156,6 +156,10 @@ func (*apisService) GetSkills() ([]apis.Skill, rest_errors.RestErr) {
 			lang.Level = level
 		}
 
+		if colorCode, ok := skill[4].(string); ok {
+			lang.ColorCode = colorCode
+		}
+
 		if jobType, ok := skill[1].(string); ok {
 			job.Name = jobType
 			job.NameJp = jobType

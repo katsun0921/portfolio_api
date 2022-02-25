@@ -12,7 +12,7 @@ const (
 	Frontend              = "frontend"
 	Backend               = "backend"
 	Infra                 = "infra"
-	SheetRangeSkill       = "Skill!A2:D18"
+	SheetRangeSkill       = "Skill!A2:D30"
 	SheetRangeJobType     = "jobType!A2:C4"
 	SheetRangeWorkexpress = "workExpress!B2:H4"
 	SheetDateLayout       = "2006/01/02"

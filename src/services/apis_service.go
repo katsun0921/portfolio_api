@@ -73,7 +73,7 @@ func (*apisService) GetRss(service string) ([]*apis.Api, rest_errors.RestErr) {
 		itemPlainText := item.Description
 		itemPlainText = strings.ReplaceAll(itemPlainText, " ", "")
 		itemPlainText = strings.ReplaceAll(itemPlainText, "\n", "")
-		t, _ := time.Parse(time.RFC1123, feed.Published)
+		t, _ := time.Parse(time.RFC1123, item.Published)
 		feedDate := t.Format(constants.DateLayout)
 
 		key.Id = item.GUID

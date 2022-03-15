@@ -26,7 +26,6 @@ type Programming struct {
 
 type Workexpress struct {
 	Id          string   `json:"id"`
-	Company     string   `json:"company"`
 	Project     string   `json:"project"`
 	JobType     string   `json:"job_type"`
 	StartDate   string   `json:"start_date"`

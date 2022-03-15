@@ -236,9 +236,6 @@ func (*apisService) GetWorkexpress() ([]apis.Workexpress, rest_errors.RestErr) {
 
 	for _, work := range Workexpress {
 		express := apis.Workexpress{}
-		if company, ok := work[0].(string); ok {
-			express.Company = company
-		}
 
 		if project, ok := work[1].(string); ok {
 			express.Project = project
